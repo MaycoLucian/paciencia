@@ -1,51 +1,32 @@
-package br.com.aula2.paciencia.carta;
+package br.com.aula2.paciencia.main;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.aula2.paciencia.model.Carta;
+import br.com.aula2.paciencia.rn.DistribuicaoRN;
+
 public class Jogar {
 	
-	private static List<Carta> cartas;
 	private static List<Carta> descarte;
-	private static List<List<Carta>> fundacoes = new ArrayList<List<Carta>>();
 	private static Carta as[];
-
+	private static DistribuicaoRN distribuicaoRN = new DistribuicaoRN();
+	
 	public static void main(String[] args) {
-		cartas = new ArrayList<Carta>();
 		descarte = new ArrayList<Carta>();
 		as = new Carta[4];
-		fundacoes = new ArrayList<List<Carta>>();
 		
 		int localOrigem;
-		int sair;
 		int localDestino;
-		
+		int sair;
 		int qntdCarta;
-		
+				
 		Scanner ler = new Scanner(System.in);
 		
-		for(int i=0 ; i<13; i++) {
-			for(int j=0 ; j<4; j++) {
-				Carta carta = new Carta(i+1, j%2==0 ? "Vermelho" : "Preto");
-				cartas.add(carta);
-			}
-		}
-		
-		Collections.shuffle(cartas);
-		
 		//sorteando as cartas
-		for(int fundacao=0; fundacao<7; fundacao++) {
-			List<Carta> cartaFundacoes = new ArrayList<Carta>();
-			for(int j=0; j<=fundacao; j++) {
-				cartaFundacoes.add(cartas.get(cartas.size() -1));
-				
-				cartas.remove(cartas.size() -1);
-			}
-			cartaFundacoes.get(cartaFundacoes.size() - 1).setVirado(true);
-			fundacoes.add(cartaFundacoes);
-		}
+		distribuicaoRN.distribuirCartas();
 		
 		do {
 			System.out.println("______________****************************______________");
@@ -53,16 +34,7 @@ public class Jogar {
 			System.out.println("______________****************************______________");
 			
 			//Imprimir as torres
-			for(int fundacao=0; fundacao<fundacoes.size(); fundacao++) {
-				System.out.println("______________Torre "+ fundacao+"______________");
-				for(Carta carta : fundacoes.get(fundacao)) {
-					if(carta.isVirado()) {
-						System.out.println(carta.getNumero() + " - " + carta.getCor());
-					} else {
-						System.out.println("Não Visivel");
-					}
-				}
-			}
+			distribuicaoRN.imprimirListaDistribuicoes();
 			
 			//Imprimir as
 			for(int i=0; i<4; i++) {
@@ -99,7 +71,7 @@ public class Jogar {
 				if(localOrigem == 12) {			
 					if(!cartas.isEmpty()) {
 						Carta cartaDescarte = cartas.get(cartas.size()-1);
-						cartaDescarte.setVirado(true);
+						cartaDescarte.setVirada(true);
 						descarte.add(cartaDescarte);
 						cartas.remove(cartas.size()-1);
 					}else {
@@ -150,11 +122,11 @@ public class Jogar {
 			if(permitidoMover(ultimaCartaDestino, ultimaCartaOrigem)) {
 				int tamanhoListaOrigem = listaOrigem.size();
 				for(int i = 0; i <  tamanhoListaOrigem ; i++) {
-					if(listaOrigem.get(i).isVirado()) {
+					if(listaOrigem.get(i).isVirada()) {
 						fundacoes.get(localDestino).add(listaOrigem.get(listaOrigem.size() - 1));
 						listaOrigem.remove(listaOrigem.size() -1);
 						if(listaOrigem!=null && !listaOrigem.isEmpty())
-							listaOrigem.get(listaOrigem.size() - 1).setVirado(true);
+							listaOrigem.get(listaOrigem.size() - 1).setVirada(true);
 					}
 				}
 			} else {
@@ -164,7 +136,7 @@ public class Jogar {
 			if(quantidade == 1) {
 				int tamanhoListaOrigem = listaOrigem.size();
 				for(int i = 0; i <  tamanhoListaOrigem ; i++) {
-					if(listaOrigem.get(i).isVirado() && listaOrigem.get(i).getNumero()==1) {
+					if(listaOrigem.get(i).isVirada() && listaOrigem.get(i).getNumero()==1) {
 						int destinoAs = localDestino -7;
 						if(as[destinoAs]!=null) {
 							System.out.println("É proibido mover carta nesse local!");
@@ -173,7 +145,7 @@ public class Jogar {
 							preencherAs(ultimaCarta, destinoAs);
 							listaOrigem.remove(listaOrigem.size() -1);
 							if(listaOrigem!=null && !listaOrigem.isEmpty())
-								listaOrigem.get(listaOrigem.size() -1).setVirado(true);;
+								listaOrigem.get(listaOrigem.size() -1).setVirada(true);;
 						}
 					}
 				}
@@ -189,17 +161,17 @@ public class Jogar {
 		if(localDestino >= 0 && localDestino <= 6 ) {
 			Carta ultimaCartaDestino = fundacoes.get(localDestino).get(fundacoes.get(localDestino).size() - 1);
 			if (permitidoMover(ultimaCartaDestino, origem)) {
-				if (origem.isVirado()) {
+				if (origem.isVirada()) {
 					fundacoes.get(localDestino).add(origem);
 					descarte.remove(descarte.size() - 1);
 					if(descarte!=null && !descarte.isEmpty())
-						descarte.get(descarte.size() - 1).setVirado(true);
+						descarte.get(descarte.size() - 1).setVirada(true);
 				}
 			} else {
 				System.out.println("É proibido mover carta nesse local!");
 			}
 		} else {
-			if (origem.isVirado() && origem.getNumero() == 1) {
+			if (origem.isVirada() && origem.getNumero() == 1) {
 				int destinoAs = localDestino - 7;
 				if (as[destinoAs] != null) {
 					System.out.println("É proibido mover carta nesse local!");
@@ -215,7 +187,7 @@ public class Jogar {
 		as[destinoAs] = new Carta();
 		as[destinoAs].setCor(origem.getCor());
 		as[destinoAs].setNumero(origem.getNumero());
-		as[destinoAs].setVirado(true);
+		as[destinoAs].setVirada(true);
 	}
 
 	private static boolean permitidoMover(Carta ultimaCartaDestino, Carta ultimaCartaOrigem) {
