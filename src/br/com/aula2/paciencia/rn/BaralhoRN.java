@@ -41,19 +41,41 @@ public class BaralhoRN {
 	}
 
 	public Carta retiraCartaTopo() {
-		if (cartas.isEmpty()) {
+		if (getCartas().isEmpty()) {
 			return null;
 		}
 
-		return cartas.pop();
+		return getCartas().pop();
 	}
 
 	public Carta obterCartaTopo() {
-		if (cartas.isEmpty()) {
+		if (getCartas().isEmpty()) {
 			return null;
 		}
 
-		return cartas.peek();
+		return getCartas().peek();
+	}
+	
+	private boolean isPossuiCartas() {
+		return getCartas()!=null && !getCartas().isEmpty();
+	}
+	
+	/**
+	 * unico movimento que pode ser feito é para a pilha de descarte
+	 */
+	public void mover(DescarteRN descarteRN) {
+		if(isPossuiCartas()) {
+			Carta cartaDescarte = obterCartaTopo();
+			cartaDescarte.setVirada(true);
+			descarteRN.getDescartes().push(cartaDescarte);
+			retiraCartaTopo();
+		}else {
+			System.out.println("Não tem mais carta para descarte, vamos resetar as cartas de descarte");
+			for(int i = descarteRN.getDescartes().size(); i > 0; i-- ) {
+				getCartas().push(descarteRN.getDescartes().get(i-1));
+			}
+			descarteRN.getDescartes().clear();
+		}
 	}
 	
 	public Stack<Carta> getCartas() {
