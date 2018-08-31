@@ -45,26 +45,32 @@ public class DistribuicaoRN extends ComumRN {
 	
 	public void mover(int localOrigem, int localDestino, int quantidade) {
 		List<Carta> listaOrigem = getDistribuicoes().get(localOrigem);
-
-		Carta ultimaCartaDestino = getDistribuicoes().get(localDestino)
-				.get(getDistribuicoes().get(localDestino).size() - 1);
-		Carta ultimaCartaOrigem = listaOrigem.get(getDistribuicoes().get(localOrigem).size() - 1);
-		if (permitidoMover(ultimaCartaDestino, ultimaCartaOrigem)) {
-			int tamanhoListaOrigem = listaOrigem.size();
-			for (int i = 0; i < tamanhoListaOrigem; i++) {
-				if (listaOrigem.get(i).isVirada()) {
-					if(getDistribuicoes().isEmpty() && listaOrigem.get(listaOrigem.size() - 1).getNumero()!=13) {
-						System.out.println(Mensagem.LISTA_VAZIA_APENAS_REIS);
+		int posicao = quantidade;
+		for(int qtd = 0; qtd < quantidade; qtd++) {
+			Carta ultimaCartaDestino = getDistribuicoes().get(localDestino)
+					.get(getDistribuicoes().get(localDestino).size() - 1);
+			Carta ultimaCartaOrigem = listaOrigem.get(getDistribuicoes().get(localOrigem).size() - posicao);
+			if (permitidoMover(ultimaCartaDestino, ultimaCartaOrigem)) {
+				//int tamanhoListaOrigem = listaOrigem.size();
+				//for (int i = 0; i < tamanhoListaOrigem; i++) {
+					if (listaOrigem.get(listaOrigem.size() - posicao).isVirada()) {
+						if(getDistribuicoes().isEmpty() && listaOrigem.get(listaOrigem.size() - posicao).getNumero()!=13) {
+							System.out.println(Mensagem.LISTA_VAZIA_APENAS_REIS);
+						} else {
+							getDistribuicoes().get(localDestino).add(listaOrigem.get(listaOrigem.size() - posicao));
+							listaOrigem.remove(listaOrigem.size() - posicao);
+							if (listaOrigem != null && !listaOrigem.isEmpty())
+								listaOrigem.get(listaOrigem.size() - posicao).setVirada(true);
+						}
 					} else {
-						getDistribuicoes().get(localDestino).add(listaOrigem.get(listaOrigem.size() - 1));
-						listaOrigem.remove(listaOrigem.size() - 1);
-						if (listaOrigem != null && !listaOrigem.isEmpty())
-							listaOrigem.get(listaOrigem.size() - 1).setVirada(true);
+						break;
 					}
-				}
+				//}
+			} else {
+				System.out.println(Mensagem.GENERICO);
+				break;
 			}
-		} else {
-			System.out.println(Mensagem.GENERICO);
+			posicao--;
 		}
 	}
 	

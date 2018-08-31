@@ -42,14 +42,20 @@ public class DescarteRN extends ComumRN {
 	public void mover(int localOrigem, int localDestino, List<List<Carta>> distribuicoes) {
 		Carta origem = obterCartaTopo();
 		
-		Carta ultimaCartaDestino = distribuicoes.get(localDestino).get(distribuicoes.get(localDestino).size() - 1);
-		if (permitidoMover(ultimaCartaDestino, origem)) {
-			if (origem.isVirada()) {
-				distribuicoes.get(localDestino).add(origem);
-				retiraCartaTopo();
+		if(!distribuicoes.isEmpty() && distribuicoes.get(localDestino).size() > 0) {
+			Carta ultimaCartaDestino = distribuicoes.get(localDestino).get(distribuicoes.get(localDestino).size() - 1);
+			if (permitidoMover(ultimaCartaDestino, origem)) {
+				if (origem.isVirada()) {
+					distribuicoes.get(localDestino).add(origem);
+					retiraCartaTopo();
+				}
+			} else {
+				System.out.println(Mensagem.GENERICO);
 			}
+		} else if(origem.getNumero()==13) {
+			distribuicoes.get(localDestino).add(origem);
 		} else {
-			System.out.println(Mensagem.GENERICO);
+			System.out.println(Mensagem.LISTA_VAZIA_APENAS_REIS);
 		}
 	}
 	
